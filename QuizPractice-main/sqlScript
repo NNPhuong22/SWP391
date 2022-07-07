@@ -1,0 +1,680 @@
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [User]
+CREATE TABLE [User]
+(
+ [u_id]          int IDENTITY (1, 1) NOT NULL ,
+ [role]          nvarchar(50) NOT NULL ,
+ [username]      nvarchar(50) NOT NULL ,
+ [password]      nvarchar(50) NOT NULL ,
+ [status]        smallint NOT NULL CONSTRAINT [DF_User_status] DEFAULT 1 ,
+ [first_name]    nvarchar(50) NOT NULL ,
+ [last_name]     nvarchar(50) NOT NULL ,
+ [birth]         smalldatetime NOT NULL ,
+ [gender]        nvarchar(10) NOT NULL ,
+ [phone]         nvarchar(20) NULL ,
+ [avatar]        nvarchar(100) NULL ,
+ [email]         nvarchar(50) NULL ,
+ [description]   nvarchar(200) NULL ,
+ [address]       nvarchar(100) NULL ,
+ [visa]          nvarchar(50) NULL ,
+ [paymentMethod] nvarchar(50) NULL ,
+ [position]      nvarchar(50) NULL ,
+ [sign]          nvarchar(50) NULL ,
+ [company]       nvarchar(50) NULL ,
+ [school]        nvarchar(50) NULL ,
+
+
+ CONSTRAINT [PK_182] PRIMARY KEY CLUSTERED ([u_id] ASC)
+);
+GO
+
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Có 4 role chính: student, admin, expert, maketer', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'role';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Mặc định là 1', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'status';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Lưu 1 trong 2 giá trị mà M hoặc F', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'gender';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Lưu link ảnh, lúc dùng chỉ cần nhúng vào thẻ img', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'avatar';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Mô tả của user. VD: giáo viên có x năm kinh nghiệm giảng dạy, ....', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'description';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Lưu số thẻ VISA. Không lưu ngày hết hạn và mã vì lý do bảo mật', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'visa';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Phương thức thanh toán. Có thể visa hoặc 1 phương thức khác như paypal,...', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'paymentMethod';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Vị trí công việc, vd: sinh viên năm 3, hiệu trưởng,...', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'position';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Chữ ký, dành cho người cấp chứng chỉ (optional)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'sign';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Công ty/ tổ chức: dành cho mentor, instructor để lưu thông tin nơi họ đang làm việc', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'company';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Trường học: dành cho hssv', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'User', @level2type=N'COLUMN', @level2name=N'school';
+GO
+
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [LoginHistory]
+CREATE TABLE [LoginHistory]
+(
+ [h_id]     int IDENTITY (1, 1) NOT NULL ,
+ [time]     smalldatetime NOT NULL ,
+ [OS]       nvarchar(50) NULL ,
+ [browser]  nvarchar(50) NULL ,
+ [location] nvarchar(50) NULL ,
+ [u_id]     int NOT NULL ,
+ [ipv4]     nvarchar(50) NOT NULL ,
+
+
+ CONSTRAINT [PK_183] PRIMARY KEY CLUSTERED ([h_id] ASC),
+ CONSTRAINT [FK_207] FOREIGN KEY ([u_id])  REFERENCES [User]([u_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_209] ON [LoginHistory] 
+ (
+  [u_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'hệ điều hành', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LoginHistory', @level2type=N'COLUMN', @level2name=N'OS';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Chrome, IE, Firefox,....', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LoginHistory', @level2type=N'COLUMN', @level2name=N'browser';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Vị trí (nếu được cho phép truy cập)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LoginHistory', @level2type=N'COLUMN', @level2name=N'location';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'user id', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LoginHistory', @level2type=N'COLUMN', @level2name=N'u_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'địa chỉ IP của wifi', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LoginHistory', @level2type=N'COLUMN', @level2name=N'ipv4';
+GO
+
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [SubjectCategory]
+CREATE TABLE [SubjectCategory]
+(
+ [cat_id] int IDENTITY (1, 1) NOT NULL ,
+ [name]   nvarchar(50) NOT NULL ,
+ [status] smallint NOT NULL ,
+
+
+ CONSTRAINT [PK_352] PRIMARY KEY CLUSTERED ([cat_id] ASC)
+);
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [SubjectType]
+CREATE TABLE [SubjectType]
+(
+ [name]   nvarchar(50) NOT NULL ,
+ [cat_id] int NOT NULL ,
+ [status] smallint NOT NULL ,
+ [typeID] int IDENTITY (1, 1) NOT NULL ,
+
+
+ CONSTRAINT [PK_357] PRIMARY KEY CLUSTERED ([typeID] ASC),
+ CONSTRAINT [FK_360] FOREIGN KEY ([cat_id])  REFERENCES [SubjectCategory]([cat_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_362] ON [SubjectType] 
+ (
+  [cat_id] ASC
+ )
+
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Blog]
+CREATE TABLE [Blog]
+(
+ [blog_id]     int IDENTITY (1, 1) NOT NULL ,
+ [title]       nvarchar(200) NOT NULL ,
+ [typeID]      int NOT NULL ,
+ [author]      int NOT NULL ,
+ [time]        smalldatetime NOT NULL ,
+ [type]        nvarchar(50) NOT NULL ,
+ [status]      smallint NOT NULL ,
+ [content]     nvarchar(2000) NOT NULL ,
+ [modifier]    int NULL ,
+ [description] nvarchar(500) NULL ,
+ [image]       nvarchar(50) NULL ,
+
+
+ CONSTRAINT [PK_198] PRIMARY KEY CLUSTERED ([blog_id] ASC),
+ CONSTRAINT [FK_151] FOREIGN KEY ([author])  REFERENCES [User]([u_id]),
+ CONSTRAINT [FK_385] FOREIGN KEY ([typeID])  REFERENCES [SubjectType]([typeID])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_153] ON [Blog] 
+ (
+  [author] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_387] ON [Blog] 
+ (
+  [typeID] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'kiểu bài viết (về khoa học, hướng dẫn học, mẹo,...)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Blog', @level2type=N'COLUMN', @level2name=N'type';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Người viết bài', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Blog', @level2type=N'COLUMN', @level2name=N'author';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Người chỉnh sửa sau cùng của bài viết', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Blog', @level2type=N'COLUMN', @level2name=N'modifier';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'mô tả', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Blog', @level2type=N'COLUMN', @level2name=N'description';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Subject]
+CREATE TABLE [Subject]
+(
+ [name]          nvarchar(50) NOT NULL ,
+ [typeID]        int NOT NULL ,
+ [instructor_id] int NOT NULL ,
+ [description]   nvarchar(500) NULL ,
+ [status]        smallint NOT NULL ,
+ [image]         nvarchar(50) NULL ,
+ [organization]  nvarchar(50) NULL ,
+ [logo]          nvarchar(50) NOT NULL ,
+ [s_id]          int IDENTITY (1, 1) NOT NULL ,
+
+
+ CONSTRAINT [PK_199] PRIMARY KEY CLUSTERED ([s_id] ASC),
+ CONSTRAINT [FK_363] FOREIGN KEY ([typeID])  REFERENCES [SubjectType]([typeID]),
+ CONSTRAINT [FK_79] FOREIGN KEY ([instructor_id])  REFERENCES [User]([u_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_365] ON [Subject] 
+ (
+  [typeID] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_81] ON [Subject] 
+ (
+  [instructor_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'user id của người tạo subject', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Subject', @level2type=N'COLUMN', @level2name=N'instructor_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link ảnh của khoá học', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Subject', @level2type=N'COLUMN', @level2name=N'image';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Tổ chức tài trợ hoặc sở hữu khoá học', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Subject', @level2type=N'COLUMN', @level2name=N'organization';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link ảnh logo', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Subject', @level2type=N'COLUMN', @level2name=N'logo';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Certificate]
+CREATE TABLE [Certificate]
+(
+ [c_id]         int IDENTITY (1, 1) NOT NULL ,
+ [u_id]         int NOT NULL ,
+ [s_id]         int NOT NULL ,
+ [received_day] smalldatetime NOT NULL ,
+ [status]       smallint NOT NULL ,
+ [result]       float NOT NULL ,
+ [cer_image]    nvarchar(50) NULL ,
+ [description]  nvarchar(500) NULL ,
+ [content]      nvarchar(500) NOT NULL ,
+
+
+ CONSTRAINT [PK_370] PRIMARY KEY CLUSTERED ([c_id] ASC),
+ CONSTRAINT [FK_276] FOREIGN KEY ([u_id])  REFERENCES [User]([u_id]),
+ CONSTRAINT [FK_279] FOREIGN KEY ([s_id])  REFERENCES [Subject]([s_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_278] ON [Certificate] 
+ (
+  [u_id] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_281] ON [Certificate] 
+ (
+  [s_id] ASC
+ )
+
+GO
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Page]
+CREATE TABLE [Page]
+(
+ [page_id]     int NOT NULL ,
+ [name]        nvarchar(50) NOT NULL ,
+ [modyfier_id] int NOT NULL ,
+ [description] nvarchar(500) NULL ,
+ [status]      smallint NOT NULL ,
+
+
+ CONSTRAINT [PK_202] PRIMARY KEY CLUSTERED ([page_id] ASC),
+ CONSTRAINT [FK_177] FOREIGN KEY ([modyfier_id])  REFERENCES [User]([u_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_179] ON [Page] 
+ (
+  [modyfier_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'tên page: home page, blog page,....', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Page', @level2type=N'COLUMN', @level2name=N'name';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'user id của người chỉnh sửa sau cùng', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Page', @level2type=N'COLUMN', @level2name=N'modyfier_id';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [div]
+CREATE TABLE [div]
+(
+ [div_id]  nvarchar(50) NOT NULL ,
+ [img]     nvarchar(50) NULL ,
+ [page_id] int NOT NULL ,
+ [content] nvarchar(500) NULL ,
+
+
+ CONSTRAINT [PK_261] PRIMARY KEY CLUSTERED ([div_id] ASC),
+ CONSTRAINT [FK_174] FOREIGN KEY ([page_id])  REFERENCES [Page]([page_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_176] ON [div] 
+ (
+  [page_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'id của div (do front end đặt)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'div', @level2type=N'COLUMN', @level2name=N'div_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link ảnh', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'div', @level2type=N'COLUMN', @level2name=N'img';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'div này thuộc page có page id nào', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'div', @level2type=N'COLUMN', @level2name=N'page_id';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [LessonTopic]
+CREATE TABLE [LessonTopic]
+(
+ [name]     nvarchar(50) NOT NULL ,
+ [s_id]     int NOT NULL ,
+ [status]   smallint NOT NULL ,
+ [topic_id] int IDENTITY (1, 1) NOT NULL ,
+
+
+ CONSTRAINT [PK_373] PRIMARY KEY CLUSTERED ([topic_id] ASC),
+ CONSTRAINT [FK_378] FOREIGN KEY ([s_id])  REFERENCES [Subject]([s_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_380] ON [LessonTopic] 
+ (
+  [s_id] ASC
+ )
+
+GO
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Lesson]
+CREATE TABLE [Lesson]
+(
+ [l_id]        int NOT NULL ,
+ [name]        nvarchar(50) NOT NULL ,
+ [no]          int NOT NULL ,
+ [video]       nvarchar(100) NULL ,
+ [image]       nvarchar(100) NULL ,
+ [content]     nvarchar(2000) NOT NULL ,
+ [description] nvarchar(500) NULL ,
+ [status]      smallint NOT NULL ,
+ [references]  nvarchar(500) NULL ,
+ [documents]   nvarchar(500) NULL ,
+ [topic_id]    int NOT NULL ,
+
+
+ CONSTRAINT [PK_414] PRIMARY KEY CLUSTERED ([l_id] ASC),
+ CONSTRAINT [FK_381] FOREIGN KEY ([topic_id])  REFERENCES [LessonTopic]([topic_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_383] ON [Lesson] 
+ (
+  [topic_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'số thứ tự của lesson', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lesson', @level2type=N'COLUMN', @level2name=N'no';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lesson', @level2type=N'COLUMN', @level2name=N'video';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lesson', @level2type=N'COLUMN', @level2name=N'image';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'nguồn tham khảo', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lesson', @level2type=N'COLUMN', @level2name=N'references';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Nguồn tài liệu', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Lesson', @level2type=N'COLUMN', @level2name=N'documents';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [QuestionBank]
+CREATE TABLE [QuestionBank]
+(
+ [question]    nvarchar(500) NOT NULL ,
+ [type]        nvarchar(50) NOT NULL ,
+ [option1]     nvarchar(500) NULL ,
+ [option2]     nvarchar(500) NULL ,
+ [option3]     nvarchar(500) NULL ,
+ [option4]     nvarchar(500) NULL ,
+ [option5]     nvarchar(500) NULL ,
+ [option6]     nvarchar(500) NULL ,
+ [option7]     nvarchar(500) NULL ,
+ [result]      nvarchar(500) NOT NULL ,
+ [l_id]        int NOT NULL ,
+ [image]       nvarchar(50) NULL ,
+ [description] nvarchar(500) NULL ,
+ [b_id]        int IDENTITY (1, 1) NOT NULL ,
+
+
+ CONSTRAINT [PK_438] PRIMARY KEY CLUSTERED ([b_id] ASC),
+ CONSTRAINT [FK_230] FOREIGN KEY ([l_id])  REFERENCES [Lesson]([l_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_232] ON [QuestionBank] 
+ (
+  [l_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Loại câu hỏi (tự luận, trắc nghiệm,...)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'QuestionBank', @level2type=N'COLUMN', @level2name=N'type';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'đáp án đúng', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'QuestionBank', @level2type=N'COLUMN', @level2name=N'result';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'câu hỏi của lesson nào', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'QuestionBank', @level2type=N'COLUMN', @level2name=N'l_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'link', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'QuestionBank', @level2type=N'COLUMN', @level2name=N'image';
+GO
+
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [PricePackage]
+CREATE TABLE [PricePackage]
+(
+ [price_id]      int NOT NULL ,
+ [s_id]          int NOT NULL ,
+ [name]          nvarchar(50) NOT NULL ,
+ [price]         int NOT NULL ,
+ [status]        smallint NOT NULL ,
+ [currency_unit] nvarchar(50) NOT NULL CONSTRAINT [DF_PricePackage_currency_unit] DEFAULT 'dollar' ,
+ [duration]      int NULL ,
+ [description]   nvarchar(500) NULL ,
+
+
+ CONSTRAINT [PK_369] PRIMARY KEY CLUSTERED ([price_id] ASC),
+ CONSTRAINT [FK_98] FOREIGN KEY ([s_id])  REFERENCES [Subject]([s_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_100] ON [PricePackage] 
+ (
+  [s_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'giá', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PricePackage', @level2type=N'COLUMN', @level2name=N'price';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'đơn vị tiền tệ (mặc định là dollar)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PricePackage', @level2type=N'COLUMN', @level2name=N'currency_unit';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Thời gian sở hữu khoá học', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PricePackage', @level2type=N'COLUMN', @level2name=N'duration';
+GO
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [SubjectRegister]
+CREATE TABLE [SubjectRegister]
+(
+ [name]            nvarchar(50) NOT NULL ,
+ [s_id]            int NOT NULL ,
+ [price]           int NOT NULL ,
+ [status]          smallint NOT NULL ,
+ [paid_condition]  smallint NOT NULL ,
+ [expiration_date] smalldatetime NULL ,
+ [register_date]   smalldatetime NOT NULL ,
+ [u_id]            int NOT NULL ,
+ [price_id]        int NOT NULL ,
+ [regis_id]        int NOT NULL ,
+
+
+ CONSTRAINT [PK_468] PRIMARY KEY CLUSTERED ([regis_id] ASC),
+ CONSTRAINT [FK_340] FOREIGN KEY ([s_id])  REFERENCES [Subject]([s_id]),
+ CONSTRAINT [FK_343] FOREIGN KEY ([u_id])  REFERENCES [User]([u_id]),
+ CONSTRAINT [FK_346] FOREIGN KEY ([price_id])  REFERENCES [PricePackage]([price_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_342] ON [SubjectRegister] 
+ (
+  [s_id] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_345] ON [SubjectRegister] 
+ (
+  [u_id] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_348] ON [SubjectRegister] 
+ (
+  [price_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'tình trạng thanh toán', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubjectRegister', @level2type=N'COLUMN', @level2name=N'paid_condition';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'ngày hết hạn', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubjectRegister', @level2type=N'COLUMN', @level2name=N'expiration_date';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'ngày đăng kí', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubjectRegister', @level2type=N'COLUMN', @level2name=N'register_date';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'id của user đã đky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubjectRegister', @level2type=N'COLUMN', @level2name=N'u_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'package đã đky', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubjectRegister', @level2type=N'COLUMN', @level2name=N'price_id';
+GO
+
+
+
+
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [Quiz]
+CREATE TABLE [Quiz]
+(
+ [q_id]          int NOT NULL ,
+ [u_id]          int NOT NULL ,
+ [topic_id]      int NOT NULL ,
+ [required_time] nvarchar(50) NULL ,
+ [taken_date]    smalldatetime NOT NULL ,
+ [score]         float NOT NULL ,
+ [status]        smallint NOT NULL ,
+ [condition]     smallint NOT NULL ,
+ [time]          nvarchar(50) NOT NULL ,
+
+
+ CONSTRAINT [PK_367] PRIMARY KEY CLUSTERED ([q_id] ASC),
+ CONSTRAINT [FK_324] FOREIGN KEY ([u_id])  REFERENCES [User]([u_id]),
+ CONSTRAINT [FK_462] FOREIGN KEY ([topic_id])  REFERENCES [LessonTopic]([topic_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_326] ON [Quiz] 
+ (
+  [u_id] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_464] ON [Quiz] 
+ (
+  [topic_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'thời gian được cho phép để làm quiz', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Quiz', @level2type=N'COLUMN', @level2name=N'required_time';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'ngày làm quiz', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Quiz', @level2type=N'COLUMN', @level2name=N'taken_date';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'user nào đã làm quiz này', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Quiz', @level2type=N'COLUMN', @level2name=N'u_id';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'trạng thái đậu hay trượt', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Quiz', @level2type=N'COLUMN', @level2name=N'condition';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Thời gian user làm quiz thực tế', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Quiz', @level2type=N'COLUMN', @level2name=N'time';
+GO
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [QuizTaken]
+CREATE TABLE [QuizTaken]
+(
+ [b_id]        int NOT NULL ,
+ [q_id]        int NOT NULL ,
+ [user_result] nvarchar(500) NULL ,
+ [status]      smallint NOT NULL ,
+ [taken_id]    int IDENTITY (1, 1) NOT NULL ,
+
+
+ CONSTRAINT [PK_469] PRIMARY KEY CLUSTERED ([taken_id] ASC),
+ CONSTRAINT [FK_142] FOREIGN KEY ([b_id])  REFERENCES [QuestionBank]([b_id]),
+ CONSTRAINT [FK_145] FOREIGN KEY ([q_id])  REFERENCES [Quiz]([q_id])
+);
+GO
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_144] ON [QuizTaken] 
+ (
+  [b_id] ASC
+ )
+
+GO
+
+CREATE NONCLUSTERED INDEX [fkIdx_147] ON [QuizTaken] 
+ (
+  [q_id] ASC
+ )
+
+GO
+
+
+
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'Kết quả mà user trả lời', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'QuizTaken', @level2type=N'COLUMN', @level2name=N'user_result';
+GO
+
+
